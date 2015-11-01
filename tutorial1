@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Runtime.InteropServices;//Needs for Dlls
+
+
+
+namespace Tutorial1
+{
+    public partial class Form1 : Form
+    {
+
+        #region Hivatkozások
+        private const int MOUSEEVENTF_LEFTDOWN = 0x0002;
+        private const int MOUSEEVENTF_LEFTUP = 0x0004;
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(int dwflags, int dx, int dy, int cbuttons, int dwExtraInfo);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool GetCursorPos(out Point lpPoint);
+        [DllImport("user32.dll")]
+        public static extern int GetAsyncKeyState(Keys vkeys);
+        public static int xPos, yPos;
+        #endregion
+        //Linked Below
+
+        int clicks = 0;
+        bool activate = false;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            clicks++;
+            label1.Text = clicks.ToString();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if(activate)
+            {
+                Point pos = new Point();
+                pos.X = Cursor.Position.X;
+                pos.Y = Cursor.Position.Y;
+                mouse_event(MOUSEEVENTF_LEFTDOWN, pos.X, pos.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_LEFTUP, pos.X, pos.Y, 0, 0);
+            }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if(GetAsyncKeyState(Keys.F1) == -32767)
+            {
+                activate = !activate;
+            }
+        }
+
+    }
+}
